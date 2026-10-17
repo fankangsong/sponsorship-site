@@ -1,0 +1,10 @@
+<h1>随笔</h1>
+<ul class="post-list">
+  <% posts.forEach(function (p) { %>
+  <li>
+    <time><%= p.date %></time>
+    <a href="/posts/<%= p.slug %>/"><%= p.title %></a>
+    <% if (p.summary) { %><span class="summary"><%= p.summary %></span><% } %>
+  </li>
+  <% }) %>
+</ul>

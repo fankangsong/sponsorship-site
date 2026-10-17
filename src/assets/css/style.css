@@ -1,0 +1,81 @@
+/* Phase 1: 极简可读样式（不做 UI 设计），暖白底 + 深字，契合老宋体气质 */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  color: #2c2a26;
+  background: #faf8f4;
+  line-height: 1.9;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* 导航 */
+.site-header { border-bottom: 1px solid #e8e2d6; }
+.nav-bar { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px 20px; padding: 18px 20px; }
+.site-name { font-size: 20px; font-weight: 700; color: #2c2a26; text-decoration: none; }
+.site-nav { display: flex; flex-wrap: wrap; gap: 14px; margin-left: auto; }
+.site-nav a { color: #5a554b; text-decoration: none; font-size: 15px; }
+.site-nav a:hover { color: #2c2a26; text-decoration: underline; }
+.site-nav a.placeholder { color: #b3aa9c; }
+
+main.container { padding-top: 36px; padding-bottom: 64px; }
+
+/* 标题与文本 */
+h1 { font-size: 30px; line-height: 1.4; margin: 0 0 12px; }
+h2 { font-size: 22px; margin: 40px 0 16px; }
+.hero h1 { font-size: 36px; }
+.intro { color: #5a554b; white-space: pre-line; margin: 0 0 8px; }
+time { color: #b3aa9c; font-size: 14px; }
+
+/* 字帖卡片栅格 */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+.card {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid #e8e2d6;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #fff;
+}
+.card img { display: block; width: 100%; height: auto; }
+.card-body { padding: 10px 14px 14px; }
+.card-body h3 { font-size: 16px; margin: 0 0 4px; font-weight: 600; }
+.card:hover { border-color: #cfc5b2; }
+
+/* 随笔列表 */
+.post-list { list-style: none; padding: 0; margin: 0; }
+.post-list li {
+  padding: 10px 0;
+  border-bottom: 1px solid #eee8dc;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  align-items: baseline;
+}
+.post-list a { color: #2c2a26; text-decoration: none; }
+.post-list a:hover { text-decoration: underline; }
+.post-list .summary { color: #8a8375; font-size: 14px; width: 100%; }
+
+.more a { color: #8a8375; text-decoration: none; font-size: 14px; }
+.more a:hover { text-decoration: underline; }
+
+/* 详情页 */
+.detail .figure { display: block; max-width: 100%; border: 1px solid #e8e2d6; border-radius: 6px; margin: 20px auto; }
+.detail .intro { color: #5a554b; white-space: pre-line; }
+.detail .back a { color: #8a8375; text-decoration: none; font-size: 14px; }
+
+.prose img { max-width: 100%; }
+.prose blockquote { border-left: 3px solid #d8cfbf; margin: 16px 0; padding: 2px 18px; color: #5a554b; }
+.prose code { background: #f0ebe0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+.prose pre { background: #f0ebe0; padding: 14px 16px; border-radius: 6px; overflow-x: auto; }
+.prose pre code { background: none; padding: 0; }
+
+/* 页脚 */
+.site-footer { border-top: 1px solid #e8e2d6; padding: 24px 0 40px; color: #8a8375; font-size: 14px; }

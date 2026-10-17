@@ -1,0 +1,14 @@
+<header class="site-header">
+  <div class="container nav-bar">
+    <a class="site-name" href="/"><%= site.title %></a>
+    <nav class="site-nav">
+      <% site.nav.forEach(function (item) { %>
+        <% if (item.placeholder) { %>
+          <a href="<%= item.href %>" class="placeholder" title="规划中"><%= item.label %>（规划中）</a>
+        <% } else { %>
+          <a href="<%= item.href %>"><%= item.label %></a>
+        <% } %>
+      <% }) %>
+    </nav>
+  </div>
+</header>

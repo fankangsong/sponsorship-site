@@ -1,0 +1,25 @@
+{
+  "name": "sponsorship-site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "纯静态个人站点：JSON/Markdown 内容 + Node 构建 + 中文字体动态子集化 + Cloudflare Pages 部署",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js && node dev.js",
+    "preview": "node dev.js"
+  },
+  "dependencies": {
+    "ejs": "^7.0.1",
+    "gray-matter": "^4.0.3",
+    "marked": "^18.1.1",
+    "sponsorship-site": "file:",
+    "subset-font": "^2.9.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}
