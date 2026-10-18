@@ -12,3 +12,8 @@ fonts/source/
 # 本地环境
 .env
 .wrangler/
+
+
+
+# WorkBuddy 项目数据
+.workbuddy/
