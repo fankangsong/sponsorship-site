@@ -1,19 +1,23 @@
 // build.js — 纯静态构建流水线
-// 内容(JSON/MD) + 模板(EJS) → dist/ 纯静态产物 + 按页面用字动态子集化的中文字体
+// 内容(JSON/MD) + 组件(React JSX) → dist/ 纯静态产物 + 按页面用字动态子集化的中文字体
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { fileURLToPath } from 'node:url';
-import ejs from 'ejs';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { marked } from 'marked';
 import matter from 'gray-matter';
 import subsetFont from 'subset-font';
+import esbuild from 'esbuild';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const DIST = path.join(ROOT, 'dist');
 const FONT_SOURCE = path.join(ROOT, 'fonts/source/source-font.ttf');
 const FONT_FAMILY = 'KingHwaOldSong';
 const FONT_OUT_BASE = 'kinghwa-oldsong-subset';
+
+// SSG 入口：esbuild 打包 React 组件树（JSX → JS），产物落 node_modules 缓存供 dynamic import
+const SSR_ENTRY = path.join(ROOT, 'src/app/entry-server.jsx');
+const SSR_BUNDLE = path.join(ROOT, 'node_modules/.cache/sponsorship-site/entry-server.mjs');
 
 // 码点基线：可打印 ASCII + 常用中文标点，防止动态内容缺字
 const ASCII = Array.from({ length: 95 }, (_, i) => String.fromCharCode(33 + i)).join('');
@@ -53,38 +57,41 @@ async function main() {
 
   const ctx = { site, gallery, posts };
 
-  // ---- 3. 渲染全部页面 ----
-  await render('pages/index.ejs', 'index.html', {
+  // ---- 3. 打包并载入 SSG 渲染入口 ----
+  const { renderPage } = await bundleSSR();
+
+  // ---- 4. 渲染全部页面 ----
+  render(renderPage, 'index', 'index.html', {
     ...ctx,
     title: site.title,
     galleryLatest: gallery.slice(0, 3),
     postsLatest: posts.slice(0, 3),
   });
-  await render('pages/gallery.ejs', 'gallery/index.html', { ...ctx, title: `字帖橱窗 · ${site.title}` });
+  render(renderPage, 'gallery', 'gallery/index.html', { ...ctx, title: `字帖橱窗 · ${site.title}` });
   for (const item of gallery) {
-    await render('pages/gallery-detail.ejs', `gallery/${item.id}/index.html`, {
+    render(renderPage, 'gallery-detail', `gallery/${item.id}/index.html`, {
       site,
       item,
       title: `${item.title} · ${site.title}`,
     });
   }
-  await render('pages/posts.ejs', 'posts/index.html', { ...ctx, title: `随笔 · ${site.title}` });
+  render(renderPage, 'posts', 'posts/index.html', { ...ctx, title: `随笔 · ${site.title}` });
   for (const post of posts) {
-    await render('pages/post-detail.ejs', `posts/${post.slug}/index.html`, {
+    render(renderPage, 'post-detail', `posts/${post.slug}/index.html`, {
       site,
       post,
       title: `${post.title} · ${site.title}`,
     });
   }
-  await render('pages/404.ejs', '404.html', { ...ctx, title: `页面不存在 · ${site.title}` });
+  render(renderPage, '404', '404.html', { ...ctx, title: `页面不存在 · ${site.title}` });
 
-  // ---- 4. 拷贝静态资产 ----
+  // ---- 5. 拷贝静态资产 ----
   copyDir(path.join(ROOT, 'src/assets'), path.join(DIST, 'assets'));
 
-  // ---- 5. 从渲染产物收集全部码点（「动态打包」的依据） ----
+  // ---- 6. 从渲染产物收集全部码点（「动态打包」的依据） ----
   const text = collectCodepoints(DIST);
 
-  // ---- 6. 单次字体子集化：33MB TTF → 仅含页面用字的 woff2 ----
+  // ---- 7. 单次字体子集化：33MB TTF → 仅含页面用字的 woff2 ----
   const hasFont = fs.existsSync(FONT_SOURCE);
   if (!hasFont && process.env.CI) {
     throw new Error('source font missing in CI — check the R2 fetch step / secrets');
@@ -104,10 +111,10 @@ async function main() {
     console.warn('[fonts] source font not found → system fallback only');
   }
 
-  // ---- 7. 字体样式表（layout 以 <link> 引用，与渲染顺序解耦） ----
+  // ---- 8. 字体样式表（layout 以 <link> 引用，与渲染顺序解耦） ----
   write(path.join(DIST, 'assets/css/fonts.css'), fontsCss(fontFile));
 
-  // ---- 8. SEO 与缓存策略 ----
+  // ---- 9. SEO 与缓存策略 ----
   const pages = listPages(DIST);
   write(path.join(DIST, 'sitemap.xml'), sitemapXml(site.url, pages));
   write(path.join(DIST, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${site.url}/sitemap.xml\n`);
@@ -120,12 +127,26 @@ async function main() {
   );
 }
 
-// ---------- 页面渲染 ----------
+// ---------- SSG 渲染 ----------
 
-async function render(template, outFile, data) {
-  const body = await ejs.renderFile(path.join(ROOT, 'src/templates', template), data);
-  const html = await ejs.renderFile(path.join(ROOT, 'src/templates/layout.ejs'), { ...data, body });
-  write(path.join(DIST, outFile), html);
+// esbuild 打包 React 组件树为 Node 可加载的 ESM；react/react-dom 保持 external 由 Node 解析
+async function bundleSSR() {
+  await esbuild.build({
+    entryPoints: [SSR_ENTRY],
+    outfile: SSR_BUNDLE,
+    bundle: true,
+    format: 'esm',
+    platform: 'node',
+    target: 'node20',
+    jsx: 'automatic',
+    external: ['react', 'react-dom', 'react-dom/server'],
+    logLevel: 'warning',
+  });
+  return import(pathToFileURL(SSR_BUNDLE).href);
+}
+
+function render(renderPage, page, outFile, data) {
+  write(path.join(DIST, outFile), renderPage(page, data));
 }
 
 // ---------- Markdown ----------

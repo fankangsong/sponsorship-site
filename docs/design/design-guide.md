@@ -160,7 +160,7 @@
 按优先级分四步，每步独立可发布：
 
 1. **Token 化**：在 `style.css` 顶部定义第 2 节 CSS 变量，替换现有写死的颜色值（`#2c2a26 → var(--ink-1)` 等），此步不改观感结构。
-2. **导航与 hero 竖排化**：新增 `.vertical` 工具类；改 `partials/nav.ejs` 为右侧竖排固定；`pages/index.ejs` 的 hero 改竖排 + 落款印章。
+2. **导航与 hero 竖排化**：新增 `.vertical` 工具类；改 `src/app/components/Nav.jsx` 为右侧竖排固定；`src/app/pages/Index.jsx` 的 hero 改竖排 + 落款印章。
 3. **去卡片化与列表重排**：按 5.3 / 5.4 调整 `.card`、`.post-list`；删除多余边框底色。
 4. **细节**：印章组件、入场动效、`prefers-reduced-motion`、移动端断点收尾。
 

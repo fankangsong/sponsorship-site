@@ -3,13 +3,14 @@
   "intro": "这里以后会放一段自我介绍。\nPhase 1 仅用于跑通「内容 → 构建 → 部署」流水线。",
   "url": "https://sponsorship-site.pages.dev",
   "nav": [
-    { "label": "首页", "href": "/" },
-    { "label": "字帖", "href": "/gallery/" },
-    { "label": "随笔", "href": "/posts/" },
-    { "label": "摄影", "href": "/", "placeholder": true },
-    { "label": "跑步", "href": "/", "placeholder": true },
-    { "label": "旅行", "href": "/", "placeholder": true },
-    { "label": "香香的画", "href": "/", "placeholder": true }
+    {
+      "label": "首页",
+      "href": "/"
+    },
+    {
+      "label": "字",
+      "href": "/gallery/"
+    }
   ],
   "footer": "小站（Mock） · 纯静态 · Cloudflare Pages"
 }

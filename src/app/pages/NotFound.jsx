@@ -1,0 +1,11 @@
+export default function NotFound() {
+  return (
+    <>
+      <h1>404</h1>
+      <p>这里什么都没有。</p>
+      <p>
+        <a href="/">回首页 →</a>
+      </p>
+    </>
+  );
+}

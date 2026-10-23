@@ -1,6 +1,6 @@
 # sponsorship-site
 
-纯静态个人站点：**JSON / Markdown 存内容 → Node 构建 → 中文字体动态子集化 → GitHub Actions 自动部署 Cloudflare Pages（免费版）**。
+纯静态个人站点：**JSON / Markdown 存内容 → React 组件（SSG 渲染）→ Node 构建 → 中文字体动态子集化 → GitHub Actions 自动部署 Cloudflare Pages（免费版）**。
 
 > 更新站点 = 编辑 `src/content/` 下的 JSON / Markdown → `git push` → 约 1–2 分钟后自动上线。无数据库、无服务端。
 
@@ -28,8 +28,8 @@ npm run preview    # 只启动服务器（需先 build）
 │   │   ├── site.json           # 站点配置：标题 / 导航 / 页脚 / 域名 url
 │   │   ├── data/gallery.json   # 字帖橱窗数据（JSON 驱动列表 + 详情页）
 │   │   └── posts/*.md          # 随笔（Markdown + frontmatter → 列表 + 详情页）
-│   ├── templates/              # EJS 模板（layout + pages + partials）
-│   └── assets/                 # css / js / img
+│   ├── app/                    # React 组件（Layout/Nav/Footer + 各页面，构建期 SSG 渲染为静态 HTML）
+│   └── assets/                 # css / img
 ├── fonts/source/               # 源字体（gitignored，禁止入库）
 ├── .github/workflows/deploy.yml# CI/CD
 └── dist/                       # 构建产物（gitignored）
