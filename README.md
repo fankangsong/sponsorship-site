@@ -73,8 +73,12 @@ summary: 摘要（列表页显示）
 4. **GitHub Secrets**（仓库 Settings → Secrets and variables → Actions）：
    - `CLOUDFLARE_ACCOUNT_ID`（面板首页右侧）
    - `CLOUDFLARE_API_TOKEN`（上一步生成的 token）
+5. **Pages 项目**（`wrangler pages deploy` 不会自动创建，需先手动建一次）：
+   ```bash
+   npx wrangler pages project create sponsorship-site --production-branch=main
+   ```
 
-配置完成后 push 或在 Actions 页手动 Re-run，首次部署会自动创建 Pages 项目 `sponsorship-site`，站点地址 `https://sponsorship-site.pages.dev`。
+配置完成后 push 或在 Actions 页手动 Re-run，CI 会自动构建并部署，站点地址 `https://sponsorship-site.pages.dev`。
 
 ## 自定义域名 Runbook（待域名就绪后）
 
