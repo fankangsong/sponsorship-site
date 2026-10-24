@@ -67,7 +67,7 @@ summary: 摘要（列表页显示）
    npx wrangler login
    npx wrangler r2 bucket create sponsorship-site-assets
    npx wrangler r2 object put sponsorship-site-assets/fonts/jinghua-oldsong-v3.ttf \
-     --file="fonts/source/source-font.ttf"
+     --file="fonts/source/source-font.ttf" --remote
    ```
 3. **API Token**：Cloudflare 面板 → My Profile → API Tokens → Create Token（自定义），权限：`Cloudflare Pages → Edit` + `Workers R2 Storage → Object Read`（Account 级）。
 4. **GitHub Secrets**（仓库 Settings → Secrets and variables → Actions）：

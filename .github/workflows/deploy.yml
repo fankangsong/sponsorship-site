@@ -33,7 +33,7 @@ jobs:
           mkdir -p fonts/source
           npx wrangler r2 object get \
             sponsorship-site-assets/fonts/jinghua-oldsong-v3.ttf \
-            --file="fonts/source/source-font.ttf"
+            --file="fonts/source/source-font.ttf" --remote
           ls -lh fonts/source
 
       - name: Build
